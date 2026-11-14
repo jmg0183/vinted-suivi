@@ -1165,3 +1165,19 @@ function chargerVentePourModification(vente) {
     window.scrollTo(0, 0);
 }
 
+// =====================================
+// ACTIVATION DU MODE HORS CONNEXION
+// =====================================
+
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+        navigator.serviceWorker.register("./service-worker.js")
+            .then(function() {
+                console.log("Service Worker activé !");
+            })
+            .catch(function(erreur) {
+                console.error("Erreur Service Worker :", erreur);
+            });
+    });
+}
+
