@@ -135,10 +135,18 @@ let photosSelectionnees = [];
 // Gestion de la modification d'un achat
 let achatEnCoursId = null;
 let photosExistantes = [];
-
+// ##############################
 champPhotos.addEventListener("change", function() {
 
     const fichiers = Array.from(champPhotos.files);
+
+    console.log("Nombre de fichiers :", fichiers.length);
+
+    fichiers.forEach(function(fichier) {
+        console.log("Photo :", fichier.name);
+        console.log("Format :", fichier.type);
+        console.log("Taille :", fichier.size);
+    });
 
     if (fichiers.length > 3) {
         alert("Maximum 3 photos autorisées !");
@@ -147,10 +155,10 @@ champPhotos.addEventListener("change", function() {
     }
 
     photosSelectionnees = fichiers.filter(fichier =>
-    fichier.type.startsWith("image/")
-);
+        fichier.type.startsWith("image/")
+    );
 
-photosExistantes = [];
+    photosExistantes = [];
 
     afficherPhotos();
 });
