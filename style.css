@@ -1,0 +1,409 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f6f8;
+    color: #333;
+}
+
+header {
+    background: #35a9a0;
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+header p {
+    margin-bottom: 0;
+}
+
+main {
+    max-width: 1100px;
+    margin: 35px auto;
+    padding: 25px;
+}
+
+main h2 {
+    margin-bottom: 25px;
+    font-size: 26px;
+}
+
+.menu {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.tuile {
+    padding: 35px 25px;
+    border-radius: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tuile:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.tuile span {
+    font-size: 42px;
+}
+
+.tuile h3 {
+    margin: 15px 0 8px;
+    font-size: 21px;
+}
+
+.tuile p {
+    margin: 0;
+    font-size: 15px;
+}
+
+.achats {
+    background: #e4f1ff;
+    color: #2466a5;
+}
+
+.ventes {
+    background: #e1f4ea;
+    color: #24794a;
+}
+
+.historique {
+    background: #f2e9fc;
+    color: #8050aa;
+}
+
+.tableau {
+    background: #fff0dc;
+    color: #b77520;
+}
+
+@media (max-width: 650px) {
+    .menu {
+        grid-template-columns: 1fr;
+    }
+
+    main {
+        margin: 15px auto;
+        padding: 15px;
+    }
+}
+
+
+/* =================================
+   FORMULAIRE ACHATS
+================================= */
+
+#page-achats {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 25px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+#page-achats h2 {
+    color: #35a9a0;
+    margin-bottom: 30px;
+}
+
+#form-achat {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#form-achat label {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#form-achat input,
+#form-achat select,
+#form-achat textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+}
+
+#form-achat input:focus,
+#form-achat select:focus,
+#form-achat textarea:focus {
+    outline: none;
+    border-color: #35a9a0;
+}
+
+#form-achat button,
+#retour-accueil {
+    padding: 13px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+}
+
+#form-achat button {
+    background: #35a9a0;
+    color: white;
+    font-weight: bold;
+}
+
+#retour-accueil {
+    background: #e8eeee;
+    color: #333;
+}
+
+#apercu-photos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+
+/* =================================
+   FORMULAIRE VENTES
+================================= */
+
+#page-ventes {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 25px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+#page-ventes h2 {
+    color: #35a9a0;
+    margin-bottom: 30px;
+}
+
+#form-vente {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#form-vente label {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#form-vente input,
+#form-vente select,
+#form-vente textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+}
+
+#form-vente input:focus,
+#form-vente select:focus,
+#form-vente textarea:focus {
+    outline: none;
+    border-color: #35a9a0;
+}
+
+#form-vente button,
+#retour-accueil-ventes {
+    padding: 13px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+}
+
+#form-vente button {
+    background: #35a9a0;
+    color: white;
+    font-weight: bold;
+}
+
+#retour-accueil-ventes {
+    background: #e8eeee;
+    color: #333;
+}
+
+#apercu-photos-vente {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+
+/* =================================
+   LISTE DES VENTES
+================================= */
+
+#liste-ventes {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 25px;
+    background: white;
+    border-radius: 15px;
+}
+
+#liste-ventes h2 {
+    color: #35a9a0;
+}
+
+.carte-vente {
+    padding: 20px;
+    margin: 15px 0;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: #fafafa;
+}
+
+.carte-vente h3 {
+    color: #24794a;
+    margin-top: 0;
+}
+
+.photos-vente {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.photos-vente img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.photos-achat img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.boutons-vente {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+#voir-ventes,
+#retour-ventes {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+#voir-ventes {
+    background: #e1f4ea;
+    color: #24794a;
+    width: 100%;
+}
+
+#retour-ventes {
+    background: #e8eeee;
+    margin-top: 20px;
+}
+
+.vente-vide {
+    padding: 25px;
+    text-align: center;
+    color: #777;
+}
+
+/* =====================================
+   PHOTOS DE L'HISTORIQUE
+   ===================================== */
+
+.photos-historique {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.photos-historique img {
+    width: 110px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+/* GRAPHIQUES DU TABLEAU DE BORD */
+
+.graphique-tableau {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    margin: 25px 0;
+}
+
+/* =====================================
+   TABLEAU DE BORD - INDICATEURS
+   ===================================== */
+
+#indicateurs-tableau {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin: 20px 0 30px;
+}
+
+.indicateur {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.indicateur h3 {
+    font-size: 15px;
+    color: #64748b;
+    margin: 0 0 10px;
+}
+
+.indicateur p {
+    font-size: 23px;
+    font-weight: bold;
+    margin: 0;
+    color: #334155;
+}
+
+/* BARRE DE NAVIGATION DES LISTES */
+
+.barre-actions-liste {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: white;
+    padding: 12px 0;
+    border-bottom: 1px solid #ddd;
+}
+

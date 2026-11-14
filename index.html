@@ -1,0 +1,277 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon suivi Vinted</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>Mon suivi Vinted</h1>
+    <p>Bienvenue dans votre espace de suivi</p>
+</header>
+
+<main>
+
+    <!-- ACCUEIL -->
+    <section id="accueil">
+        <h2>Mon activité</h2>
+
+        <div class="menu">
+            <div class="tuile achats" data-page="achats">
+                <span>🛍️</span>
+                <h3>ACHATS</h3>
+                <p>Enregistrer les articles achetés</p>
+            </div>
+
+            <div class="tuile ventes">
+                <span>💰</span>
+                <h3>VENTES</h3>
+                <p>Enregistrer les articles vendus</p>
+            </div>
+
+            <div class="tuile historique">
+                <span>📋</span>
+                <h3>HISTORIQUE</h3>
+                <p>Retrouver les opérations</p>
+            </div>
+
+            <div class="tuile tableau">
+                <span>📊</span>
+                <h3>TABLEAU DE BORD</h3>
+                <p>Vue générale de l'activité</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAGE HISTORIQUE -->
+    <section id="page-historique" hidden>
+
+    <div class="barre-actions-liste">
+        <h2>📚 Historique des opérations</h2>
+
+        <button id="retour-historique">
+            ← Retour à l'accueil
+        </button>
+    </div>
+
+    <div id="filtres-historique">
+
+        <button id="filtre-toutes">Toutes</button>
+        <button id="filtre-achats">Achats</button>
+        <button id="filtre-ventes">Ventes</button>
+
+    </div>
+
+    <div id="liste-historique"></div>
+
+
+</section>
+
+    <!-- PAGE TABLEAU DE BORD -->
+<section id="page-tableau" hidden>
+
+    <h2>📊 Tableau de bord</h2>
+
+    <button id="retour-tableau">
+        ← Retour à l'accueil
+    </button>
+
+    <div id="indicateurs-tableau"></div>
+    
+    <div class="graphique-tableau">
+        <h3>Répartition des opérations</h3>
+        <canvas id="graphique-repartition"></canvas>
+    </div>
+
+    <div class="graphique-tableau">
+        <h3>Évolution mensuelle des montants</h3>
+        <canvas id="graphique-mensuel"></canvas>
+    </div>
+
+</section>
+
+    <!-- FORMULAIRE ACHATS -->
+    <section id="page-achats" hidden>
+
+        <h2>🛍️ Enregistrer un achat</h2>
+
+        <form id="form-achat">
+
+            <label for="date-achat">Date d'achat</label>
+            <input type="date" id="date-achat" required>
+
+            <label for="designation-achat">Désignation de l'article</label>
+            <input type="text" id="designation-achat"
+                   placeholder="Exemple : Robe Zara" required>
+
+            <label for="categorie-achat">Catégorie</label>
+            <select id="categorie-achat" required>
+                <option value="">Choisir une catégorie</option>
+                <option>Vêtements</option>
+                <option>Chaussures</option>
+                <option>Sacs et accessoires</option>
+                <option>Maison</option>
+                <option>Autres</option>
+            </select>
+
+            <label for="prix-achat">Prix payé (€)</label>
+            <input type="number" id="prix-achat"
+                   min="0" step="0.01" placeholder="0,00" required>
+
+            <label for="photos-achat">Photos (maximum 3)</label>
+            <input type="file" id="photos-achat"
+                   accept="image/*" multiple>
+
+            <div id="apercu-photos"></div>
+
+            <label for="commentaire-achat">Commentaire (facultatif)</label>
+            <textarea id="commentaire-achat"
+                      rows="3"
+                      placeholder="Informations complémentaires..."></textarea>
+
+            <button type="submit">Enregistrer l'achat</button>
+            <button type="button" id="voir-achats">
+                📋 Consulter mes achats
+            </button>
+
+
+        </form>
+
+        <button type="button" id="retour-accueil">
+            ← Retour à l'accueil
+        </button>
+    
+    
+    </section>
+
+    <!-- LISTE DES ACHATS -->
+        <section id="liste-achats" hidden>
+
+            <div class="barre-actions-liste">
+                <h2>📋 Mes achats enregistrés</h2>
+                <button type="button" id="retour-achats">
+                    ← Retour aux achats
+                </button>
+            </div>
+
+            <div class="recherche-liste">
+            <input
+                type="search"
+                id="recherche-achats"
+                placeholder="🔎 Rechercher un achat..."
+            >
+            </div>
+
+        <div id="conteneur-achats">
+            <!-- Les achats apparaîtront ici -->
+        </div>
+
+        
+
+    </section>
+
+
+    <!-- FORMULAIRE VENTES -->
+    <section id="page-ventes" hidden>
+
+        <h2>💰 Enregistrer une vente</h2>
+
+        <form id="form-vente">
+
+            <label for="date-vente">Date de vente</label>
+            <input type="date" id="date-vente" required>
+
+            <label for="designation-vente">
+                Désignation de l'article
+            </label>
+            <input type="text"
+                   id="designation-vente"
+                   placeholder="Exemple : Robe Zara"
+                   required>
+
+            <label for="categorie-vente">Catégorie</label>
+            <select id="categorie-vente" required>
+                <option value="">Choisir une catégorie</option>
+                <option>Vêtements</option>
+                <option>Chaussures</option>
+                <option>Sacs et accessoires</option>
+                <option>Maison</option>
+                <option>Autres</option>
+            </select>
+
+            <label for="prix-vente">Prix de vente (€)</label>
+            <input type="text"
+                    id="prix-vente"
+                    inputmode="decimal"
+                    placeholder="0,00"
+                    required>
+
+            <label for="photos-vente">
+                Photos (maximum 3)
+            </label>
+            <input type="file"
+                   id="photos-vente"
+                   accept="image/*"
+                   multiple>
+
+            <div id="apercu-photos-vente"></div>
+
+            <label for="commentaire-vente">
+                Commentaire (facultatif)
+            </label>
+            <textarea id="commentaire-vente"
+                      rows="3"
+                      placeholder="Informations complémentaires...">
+            </textarea>
+
+            <button type="submit">
+                Enregistrer la vente
+            </button>
+
+            <button type="button" id="voir-ventes">
+                📋 Consulter mes ventes
+            </button>
+
+        </form>
+
+        <button type="button" id="retour-accueil-ventes">
+            ← Retour à l'accueil
+        </button>
+
+    </section>
+
+    
+    <!-- LISTE DES VENTES -->
+    <section id="liste-ventes" hidden>
+
+            <div class="barre-actions-liste">
+                <h2>📋 Mes ventes enregistrées</h2>
+                <button type="button" id="retour-ventes">
+                    ← Retour aux ventes
+                </button>
+    </div>
+
+        <div class="recherche-liste">
+            <input
+                type="search"
+                id="recherche-ventes"
+                placeholder="🔎 Rechercher une vente..."
+            >
+        </div>
+        <div id="conteneur-ventes">
+            <!-- Les ventes apparaîtront ici -->
+        </div>
+
+    </section>
+
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
