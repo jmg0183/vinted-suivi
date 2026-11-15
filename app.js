@@ -2,6 +2,7 @@
 // =====================================
 // APPLICATION SUIVI VINTED
 // Gestion de la base de données
+// 15-11-26
 // =====================================
 
 const DB_NAME = "VintedDatabase";
@@ -140,17 +141,19 @@ champPhotos.addEventListener("change", function() {
 
     const fichiers = Array.from(champPhotos.files);
 
-    if (fichiers.length > 3) {
-        alert("Maximum 3 photos autorisées !");
+    const nouvellesPhotos = fichiers.filter(fichier =>
+        fichier.type.startsWith("image/")
+    );
+
+    if (photosExistantes.length + photosSelectionnees.length + nouvellesPhotos.length > 3) {
+        alert("Maximum 3 photos au total !");
         champPhotos.value = "";
         return;
     }
 
-    photosSelectionnees = fichiers.filter(fichier =>
-    fichier.type.startsWith("image/")
-);
+    photosSelectionnees.push(...nouvellesPhotos);
 
-photosExistantes = [];
+    champPhotos.value = "";
 
     afficherPhotos();
 });
@@ -179,6 +182,7 @@ function afficherPhotos() {
 }
 
 
+
 // =====================================
 // ENREGISTREMENT D'UN ACHAT
 // =====================================
@@ -194,12 +198,15 @@ document.getElementById("form-achat")
         }
 
         // Compression des nouvelles photos
-        const photosAEnregistrer = photosSelectionnees.length > 0
-            ? await Promise.all(
-                photosSelectionnees.map(photo => compresserPhoto(photo))
-            )
-            : photosExistantes;
+        
+        const nouvellesPhotos = await Promise.all(
+            photosSelectionnees.map(photo => compresserPhoto(photo))
+        );
 
+        const photosAEnregistrer = [
+            ...photosExistantes,
+            ...nouvellesPhotos
+        ];
         const achat = {
 
             date: document.getElementById("date-achat").value,
@@ -410,6 +417,9 @@ function chargerAchatPourModification(achat) {
 
     // Conservation des anciennes photos
     photosExistantes = achat.photos || [];
+
+    console.log("ANCIENNES PHOTOS :", photosExistantes.length);
+
     photosSelectionnees = [];
 
     champPhotos.value = "";
@@ -537,21 +547,22 @@ champPhotosVente.addEventListener("change", function() {
 
     const fichiers = Array.from(champPhotosVente.files);
 
-    if (fichiers.length > 3) {
-        alert("Maximum 3 photos autorisées !");
+    const nouvellesPhotos = fichiers.filter(fichier =>
+        fichier.type.startsWith("image/")
+    );
+
+    if (photosVenteExistantes.length +
+        photosVenteSelectionnees.length +
+        nouvellesPhotos.length > 3) {
+
+        alert("Maximum 3 photos au total !");
         champPhotosVente.value = "";
         return;
     }
 
-    photosVenteSelectionnees = fichiers.filter(fichier =>
-        fichier.type.startsWith("image/")
-    );
+    photosVenteSelectionnees.push(...nouvellesPhotos);
 
-    if (photosVenteSelectionnees.length !== fichiers.length) {
-        alert("Seules les images sont acceptées.");
-    }
-
-    photosVenteExistantes = [];
+    champPhotosVente.value = "";
 
     afficherPhotosVente();
 });
@@ -611,7 +622,10 @@ formVente.addEventListener("submit", async function(event) {
                     .replace(",", ".")
             ),
 
-            photos: photosCompressees,
+            photos: [
+                ...photosVenteExistantes,
+                ...photosCompressees
+            ],
 
             commentaire: document.getElementById("commentaire-vente").value.trim(),
 
