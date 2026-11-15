@@ -158,17 +158,16 @@ champPhotos.addEventListener("change", function() {
     afficherPhotos();
 });
 
-
 function afficherPhotos() {
 
     apercuPhotos.innerHTML = "";
 
-    const toutesLesPhotos = [
-        ...photosExistantes,
-        ...photosSelectionnees
-    ];
+    function ajouterPhoto(photo, supprimerPhoto) {
 
-    toutesLesPhotos.forEach(function(photo) {
+        const cadre = document.createElement("div");
+        cadre.style.position = "relative";
+        cadre.style.display = "inline-block";
+        cadre.style.margin = "5px";
 
         const image = document.createElement("img");
         image.src = URL.createObjectURL(photo);
@@ -177,10 +176,39 @@ function afficherPhotos() {
         image.style.objectFit = "cover";
         image.style.borderRadius = "10px";
 
-        apercuPhotos.appendChild(image);
+        const bouton = document.createElement("button");
+        bouton.textContent = "✖";
+        bouton.type = "button";
+        bouton.style.position = "absolute";
+        bouton.style.top = "3px";
+        bouton.style.right = "3px";
+        bouton.style.background = "red";
+        bouton.style.color = "white";
+        bouton.style.border = "none";
+        bouton.style.borderRadius = "50%";
+        bouton.style.cursor = "pointer";
+
+        bouton.addEventListener("click", supprimerPhoto);
+
+        cadre.appendChild(image);
+        cadre.appendChild(bouton);
+        apercuPhotos.appendChild(cadre);
+    }
+
+    photosExistantes.forEach(function(photo, index) {
+        ajouterPhoto(photo, function() {
+            photosExistantes.splice(index, 1);
+            afficherPhotos();
+        });
+    });
+
+    photosSelectionnees.forEach(function(photo, index) {
+        ajouterPhoto(photo, function() {
+            photosSelectionnees.splice(index, 1);
+            afficherPhotos();
+        });
     });
 }
-
 
 
 // =====================================
@@ -199,14 +227,15 @@ document.getElementById("form-achat")
 
         // Compression des nouvelles photos
         
-        const nouvellesPhotos = await Promise.all(
-            photosSelectionnees.map(photo => compresserPhoto(photo))
+        const toutesLesPhotos = [
+            ...photosExistantes,
+            ...photosSelectionnees
+        ];
+
+        const photosAEnregistrer = await Promise.all(
+            toutesLesPhotos.map(photo => compresserPhoto(photo))
         );
 
-        const photosAEnregistrer = [
-            ...photosExistantes,
-            ...nouvellesPhotos
-        ];
         const achat = {
 
             date: document.getElementById("date-achat").value,
@@ -571,18 +600,51 @@ function afficherPhotosVente() {
 
     apercuPhotosVente.innerHTML = "";
 
-    [...photosVenteExistantes, ...photosVenteSelectionnees].forEach(function(photo) {
+    function ajouterPhoto(photo, supprimerPhoto) {
+
+        const cadre = document.createElement("div");
+        cadre.style.position = "relative";
+        cadre.style.display = "inline-block";
+        cadre.style.margin = "5px";
 
         const image = document.createElement("img");
-
         image.src = URL.createObjectURL(photo);
         image.style.width = "110px";
         image.style.height = "110px";
         image.style.objectFit = "cover";
         image.style.borderRadius = "10px";
 
-        apercuPhotosVente.appendChild(image);
+        const bouton = document.createElement("button");
+        bouton.textContent = "✖";
+        bouton.type = "button";
+        bouton.style.position = "absolute";
+        bouton.style.top = "3px";
+        bouton.style.right = "3px";
+        bouton.style.background = "red";
+        bouton.style.color = "white";
+        bouton.style.border = "none";
+        bouton.style.borderRadius = "50%";
+        bouton.style.cursor = "pointer";
 
+        bouton.addEventListener("click", supprimerPhoto);
+
+        cadre.appendChild(image);
+        cadre.appendChild(bouton);
+        apercuPhotosVente.appendChild(cadre);
+    }
+
+    photosVenteExistantes.forEach(function(photo, index) {
+        ajouterPhoto(photo, function() {
+            photosVenteExistantes.splice(index, 1);
+            afficherPhotosVente();
+        });
+    });
+
+    photosVenteSelectionnees.forEach(function(photo, index) {
+        ajouterPhoto(photo, function() {
+            photosVenteSelectionnees.splice(index, 1);
+            afficherPhotosVente();
+        });
     });
 }
 
@@ -602,11 +664,14 @@ formVente.addEventListener("submit", async function(event) {
     try {
 
         // Compression des photos
-        const photosCompressees = await Promise.all(
-            photosVenteSelectionnees.map(photo =>
-                compresserPhoto(photo)
-            )
-        );
+        const toutesLesPhotosVente = [
+            ...photosVenteExistantes,
+            ...photosVenteSelectionnees
+        ];
+
+const photosCompressees = await Promise.all(
+    toutesLesPhotosVente.map(photo => compresserPhoto(photo))
+);
 
         const vente = {
 
@@ -622,10 +687,7 @@ formVente.addEventListener("submit", async function(event) {
                     .replace(",", ".")
             ),
 
-            photos: [
-                ...photosVenteExistantes,
-                ...photosCompressees
-            ],
+            photos: photosCompressees,
 
             commentaire: document.getElementById("commentaire-vente").value.trim(),
 
