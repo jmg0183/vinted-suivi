@@ -187,6 +187,19 @@ function afficherPhotos() {
         bouton.style.border = "none";
         bouton.style.borderRadius = "50%";
         bouton.style.cursor = "pointer";
+        bouton.style.width = "30px";
+        bouton.style.height = "30px";
+        bouton.style.minWidth = "30px";
+        bouton.style.minHeight = "30px";
+        bouton.style.padding = "0";
+        bouton.style.margin = "0";
+        bouton.style.display = "flex";
+        bouton.style.alignItems = "center";
+        bouton.style.justifyContent = "center";
+        bouton.style.fontSize = "18px";
+        bouton.style.lineHeight = "1";
+        bouton.style.zIndex = "20";
+        bouton.style.boxSizing = "border-box";
 
         bouton.addEventListener("click", supprimerPhoto);
 
@@ -625,6 +638,19 @@ function afficherPhotosVente() {
         bouton.style.border = "none";
         bouton.style.borderRadius = "50%";
         bouton.style.cursor = "pointer";
+        bouton.style.width = "30px";
+        bouton.style.height = "30px";
+        bouton.style.minWidth = "30px";
+        bouton.style.minHeight = "30px";
+        bouton.style.padding = "0";
+        bouton.style.margin = "0";
+        bouton.style.display = "flex";
+        bouton.style.alignItems = "center";
+        bouton.style.justifyContent = "center";
+        bouton.style.fontSize = "18px";
+        bouton.style.lineHeight = "1";
+        bouton.style.zIndex = "20";
+        bouton.style.boxSizing = "border-box";
 
         bouton.addEventListener("click", supprimerPhoto);
 
