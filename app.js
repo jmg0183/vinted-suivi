@@ -135,18 +135,10 @@ let photosSelectionnees = [];
 // Gestion de la modification d'un achat
 let achatEnCoursId = null;
 let photosExistantes = [];
-// ##############################
+
 champPhotos.addEventListener("change", function() {
 
     const fichiers = Array.from(champPhotos.files);
-
-    console.log("Nombre de fichiers :", fichiers.length);
-
-    fichiers.forEach(function(fichier) {
-        console.log("Photo :", fichier.name);
-        console.log("Format :", fichier.type);
-        console.log("Taille :", fichier.size);
-    });
 
     if (fichiers.length > 3) {
         alert("Maximum 3 photos autorisées !");
@@ -155,10 +147,10 @@ champPhotos.addEventListener("change", function() {
     }
 
     photosSelectionnees = fichiers.filter(fichier =>
-        fichier.type.startsWith("image/")
-    );
+    fichier.type.startsWith("image/")
+);
 
-    photosExistantes = [];
+photosExistantes = [];
 
     afficherPhotos();
 });
@@ -357,7 +349,7 @@ function afficherListeAchats() {
 
             // Bouton supprimer
             const boutons = document.createElement("div");
-            boutons.className = "boutons-achat";
+            boutons.className = "boutons-achats";
 
 
             const modifier = document.createElement("button");
@@ -1171,21 +1163,5 @@ function chargerVentePourModification(vente) {
     pageVentes.hidden = false;
 
     window.scrollTo(0, 0);
-}
-
-// =====================================
-// ACTIVATION DU MODE HORS CONNEXION
-// =====================================
-
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function() {
-        navigator.serviceWorker.register("./service-worker.js")
-            .then(function() {
-                console.log("Service Worker activé !");
-            })
-            .catch(function(erreur) {
-                console.error("Erreur Service Worker :", erreur);
-            });
-    });
 }
 
