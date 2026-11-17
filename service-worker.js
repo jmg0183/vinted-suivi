@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "vinted-v5";
+const CACHE_NAME = "vinted-v6";
 
 const FICHIERS = [
     "./",
