@@ -8,6 +8,22 @@
 const DB_NAME = "VintedDatabase";
 const DB_VERSION = 1;
 
+// Conversion sécurisée des prix
+function convertirPrix(valeur) {
+    if (typeof valeur === "number") {
+        return Number.isFinite(valeur) ? valeur : 0;
+    }
+
+    const texte = String(valeur ?? "")
+        .trim()
+        .replace(/\s/g, "")
+        .replace(",", ".");
+
+    const nombre = Number(texte);
+
+    return Number.isFinite(nombre) ? nombre : 0;
+}
+
 let db;
 
 // Ouverture de la base
@@ -257,7 +273,7 @@ document.getElementById("form-achat")
 
             categorie: document.getElementById("categorie-achat").value,
 
-            prix: Number(document.getElementById("prix-achat").value),
+            prix: convertirPrix(document.getElementById("prix-achat").value), 
 
             photos: photosAEnregistrer,
 
@@ -371,7 +387,7 @@ function afficherListeAchats() {
             informations.textContent =
                 "Date : " + achat.date +
                 " | Catégorie : " + achat.categorie +
-                " | Prix : " + achat.prix.toFixed(2) + " €";
+                " | Prix : " + convertirPrix(achat.prix).toFixed(2) + " €";
 
             carte.appendChild(titre);
             carte.appendChild(informations);
@@ -707,11 +723,7 @@ const photosCompressees = await Promise.all(
 
             categorie: document.getElementById("categorie-vente").value,
 
-            prix: Number(
-                document.getElementById("prix-vente").value
-                    .trim()
-                    .replace(",", ".")
-            ),
+            prix: convertirPrix(document.getElementById("prix-vente").value), 
 
             photos: photosCompressees,
 
@@ -842,7 +854,7 @@ function afficherListeVentes() {
             informations.textContent =
                 "Date : " + vente.date +
                 " | Catégorie : " + vente.categorie +
-                " | Prix : " + vente.prix.toFixed(2) + " €";
+                " | Prix : " + convertirPrix(vente.prix).toFixed(2) + " €";
 
             carte.appendChild(titre);
             carte.appendChild(informations);
@@ -943,11 +955,11 @@ function afficherTableauDeBord() {
         const nombreVentes = ventes.length;
 
         const totalAchats = achats.reduce(
-            (total, achat) => total + Number(achat.prix), 0
+            (total, achat) => total + convertirPrix(achat.prix), 0
         );
 
         const totalVentes = ventes.reduce(
-            (total, vente) => total + Number(vente.prix), 0
+            (total, vente) => total + convertirPrix(vente.prix), 0
         );
 
         const anneeEnCours = new Date().getFullYear();
@@ -955,11 +967,11 @@ function afficherTableauDeBord() {
         const totalOperationsAnnee =
             achats
                 .filter(achat => achat.date.startsWith(String(anneeEnCours)))
-                .reduce((total, achat) => total + Number(achat.prix), 0)
+                .reduce((total, achat) => total + convertirPrix(achat.prix), 0)
             +
             ventes
                 .filter(vente => vente.date.startsWith(String(anneeEnCours)))
-                .reduce((total, vente) => total + Number(vente.prix), 0);
+                .reduce((total, vente) => total + convertirPrix(vente.prix), 0);
 
             // Graphique circulaire : répartition des opérations
 
@@ -1002,7 +1014,7 @@ achats.forEach(function(achat) {
     const date = new Date(achat.date + "T12:00:00");
 
     if (date.getFullYear() === anneeEnCours) {
-        montantsAchats[date.getMonth()] += Number(achat.prix);
+        montantsAchats[date.getMonth()] += convertirPrix(achat.prix);
     }
 });
 
@@ -1010,7 +1022,7 @@ ventes.forEach(function(vente) {
     const date = new Date(vente.date + "T12:00:00");
 
     if (date.getFullYear() === anneeEnCours) {
-        montantsVentes[date.getMonth()] += Number(vente.prix);
+        montantsVentes[date.getMonth()] += convertirPrix(vente.prix);
     }
 });
 
@@ -1090,6 +1102,9 @@ graphiqueMensuel = new Chart(
 let filtreHistorique = "toutes";
 let operationsHistorique = [];
 
+const filtreAnnee = document.getElementById("filtre-annee");
+const filtreMois = document.getElementById("filtre-mois");
+
 // =====================================
 // AFFICHAGE DE L'HISTORIQUE
 // =====================================
@@ -1123,6 +1138,20 @@ function afficherHistorique() {
             return b.date.localeCompare(a.date);
         });
 
+        // Remplir la liste des années disponibles
+        const annees = [...new Set(
+            operationsHistorique.map(operation => operation.date.substring(0, 4))
+        )].sort((a, b) => b.localeCompare(a));
+
+        filtreAnnee.innerHTML = '<option value="toutes">Toutes les années</option>';
+
+        annees.forEach(function(annee) {
+            const option = document.createElement("option");
+            option.value = annee;
+            option.textContent = annee;
+            filtreAnnee.appendChild(option);
+        });
+
         afficherOperationsHistorique();
 
     };
@@ -1142,12 +1171,28 @@ function afficherOperationsHistorique() {
 
     listeHistorique.innerHTML = "";
 
+    const anneeChoisie = filtreAnnee.value;
+    const moisChoisi = filtreMois.value;
+
     const operationsFiltrees = operationsHistorique.filter(
         function(operation) {
 
-            return filtreHistorique === "toutes" ||
-                   operation.type === filtreHistorique;
+            const annee = operation.date.substring(0, 4);
+            const mois = operation.date.substring(5, 7);
 
+            const bonType =
+                filtreHistorique === "toutes" ||
+                operation.type === filtreHistorique;
+
+            const bonneAnnee =
+                anneeChoisie === "toutes" ||
+                annee === anneeChoisie;
+
+            const bonMois =
+                moisChoisi === "tous" ||
+                mois === moisChoisi;
+
+            return bonType && bonneAnnee && bonMois;
         }
     );
 
@@ -1170,7 +1215,7 @@ function afficherOperationsHistorique() {
         informations.textContent =
             "Date : " + operation.date +
             " | Catégorie : " + operation.categorie +
-            " | Prix : " + Number(operation.prix).toFixed(2) + " €";
+            " | Prix : " + convertirPrix(operation.prix).toFixed(2) + " €";
 
         carte.appendChild(type);
         carte.appendChild(titre);
@@ -1184,23 +1229,18 @@ function afficherOperationsHistorique() {
             operation.photos.forEach(function(photo) {
 
                 const image = document.createElement("img");
-
                 image.src = URL.createObjectURL(photo);
                 image.alt = operation.designation;
 
                 zonePhotos.appendChild(image);
-
             });
 
             carte.appendChild(zonePhotos);
         }
 
         listeHistorique.appendChild(carte);
-
     });
-
 }
-
 // =====================================
 // FILTRES DE L'HISTORIQUE
 // =====================================
@@ -1228,6 +1268,15 @@ document.getElementById("filtre-ventes")
         afficherOperationsHistorique();
 
     });
+
+    // Filtres par année et par mois
+filtreAnnee.addEventListener("change", function() {
+    afficherOperationsHistorique();
+});
+
+filtreMois.addEventListener("change", function() {
+    afficherOperationsHistorique();
+});
 
 // =====================================
 // MODIFICATION D'UNE VENTE
