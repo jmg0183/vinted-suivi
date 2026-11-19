@@ -494,23 +494,15 @@ main h2 {
     color: #333;
     cursor: pointer;
 }
-/* BOUTONS X DE SUPPRESSION DES PHOTOS */
 
-#apercu-photos button,
-#apercu-photos-vente button {
-    width: 28px !important;
-    height: 28px !important;
-    min-height: 28px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    font-size: 16px !important;
-    line-height: 28px !important;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    background: #e53935 !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 50% !important;
+
+/* Mise en forme des filtres Année et Mois */
+#filtres-dates-historique select {
+    padding: 15px 20px;
+    font-size: 17px;
+    min-height: 48px;
+    border: 2px solid #999;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
 }
