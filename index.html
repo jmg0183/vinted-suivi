@@ -44,7 +44,47 @@
                 <h3>TABLEAU DE BORD</h3>
                 <p>Vue générale de l'activité</p>
             </div>
+
+            <div class="tuile sauvegarde" data-page="sauvegarde">
+                <span>💾</span>
+                <h3>SAUVEGARDE</h3>
+                <p>Protéger mes achats et mes ventes</p>
+            </div>
+
         </div>
+    </section>
+
+        <!-- PAGE SAUVEGARDE -->
+    <section id="page-sauvegarde" hidden>
+
+        <div class="barre-actions-liste">
+            <h2>💾 SAUVEGARDE</h2>
+
+            <button id="retour-sauvegarde">
+                ← Retour à l'accueil
+            </button>
+        </div>
+
+        <p>
+            Créer une sauvegarde complète de tes achats,
+            de tes ventes et de leurs photos.
+        </p>
+
+        <button id="creer-sauvegarde">
+            💾 Créer une sauvegarde
+        </button>
+
+        <button id="restaurer-sauvegarde">
+            📂 Restaurer une sauvegarde
+        </button>
+
+        <input
+            type="file"
+            id="fichier-sauvegarde"
+            accept=".json,application/json"
+            hidden
+        >
+
     </section>
 
     <!-- PAGE HISTORIQUE -->
