@@ -84,6 +84,16 @@ document.querySelector(".achats").addEventListener("click", function() {
     pageAchats.hidden = false;
 });
 
+document.querySelector(".sauvegarde").addEventListener("click", function() {
+    document.getElementById("accueil").hidden = true;
+    document.getElementById("page-sauvegarde").hidden = false;
+});
+
+document.getElementById("retour-sauvegarde").addEventListener("click", function() {
+    document.getElementById("page-sauvegarde").hidden = true;
+    document.getElementById("accueil").hidden = false;
+});
+
 document.getElementById("retour-accueil")
     .addEventListener("click", function() {
 
@@ -1316,3 +1326,284 @@ function chargerVentePourModification(vente) {
     window.scrollTo(0, 0);
 }
 
+// =====================================
+// SAUVEGARDE COMPLETE
+// =====================================
+
+function blobVersBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const lecteur = new FileReader();
+
+        lecteur.onload = function() {
+            resolve(lecteur.result.split(",")[1]);
+        };
+
+        lecteur.onerror = function() {
+            reject(lecteur.error);
+        };
+
+        lecteur.readAsDataURL(blob);
+    });
+}
+
+async function preparerDonneesSauvegarde(enregistrements) {
+    return Promise.all(enregistrements.map(async function(enregistrement) {
+
+        const photos = await Promise.all(
+            (enregistrement.photos || []).map(async function(photo) {
+                return {
+                    type: photo.type || "image/jpeg",
+                    data: await blobVersBase64(photo)
+                };
+            })
+        );
+
+        return {
+            ...enregistrement,
+            photos: photos
+        };
+    }));
+}
+
+function lireMagasinPourSauvegarde(nomMagasin) {
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction([nomMagasin], "readonly");
+        const requete = transaction.objectStore(nomMagasin).getAll();
+
+        requete.onsuccess = function() {
+            resolve(requete.result);
+        };
+
+        requete.onerror = function() {
+            reject(requete.error);
+        };
+    });
+}
+
+async function creerSauvegarde() {
+
+    try {
+        if (!db) {
+            throw new Error("La base de données n'est pas encore ouverte.");
+        }
+
+        const achats = await lireMagasinPourSauvegarde("achats");
+        const ventes = await lireMagasinPourSauvegarde("ventes");
+
+        const sauvegarde = {
+            format: "vinted-suivi-backup",
+            version: 1,
+            dateCreation: new Date().toISOString(),
+            achats: await preparerDonneesSauvegarde(achats),
+            ventes: await preparerDonneesSauvegarde(ventes)
+        };
+
+        const contenu = JSON.stringify(sauvegarde, null, 2);
+
+        const fichier = new Blob(
+            [contenu],
+            { type: "application/json" }
+        );
+
+        const url = URL.createObjectURL(fichier);
+        const lien = document.createElement("a");
+
+        const date = new Date().toISOString().slice(0, 10);
+
+        lien.href = url;
+        lien.download = "Sauvegarde_Vinted_" + date + ".json";
+
+        document.body.appendChild(lien);
+        lien.click();
+        document.body.removeChild(lien);
+
+        setTimeout(function() {
+            URL.revokeObjectURL(url);
+        }, 2000);
+
+        alert("Sauvegarde créée avec succès !");
+
+    } catch (erreur) {
+        console.error("Erreur de sauvegarde :", erreur);
+        alert("La sauvegarde a échoué : " + erreur.message);
+    }
+}
+
+document.getElementById("creer-sauvegarde")
+    .addEventListener("click", creerSauvegarde);
+
+// =====================================
+// RESTAURATION D'UNE SAUVEGARDE
+// =====================================
+
+function base64VersBlob(donnees, type) {
+    const binaire = atob(donnees);
+    const octets = new Uint8Array(binaire.length);
+
+    for (let i = 0; i < binaire.length; i++) {
+        octets[i] = binaire.charCodeAt(i);
+    }
+
+    return new Blob([octets], {
+        type: type || "image/jpeg"
+    });
+}
+
+async function convertirDonneesRestauration(enregistrements) {
+    return Promise.all(enregistrements.map(async function(enregistrement) {
+
+        const photos = await Promise.all(
+            (enregistrement.photos || []).map(async function(photo) {
+
+                if (!photo || typeof photo.data !== "string") {
+                    throw new Error("Une photo de la sauvegarde est invalide.");
+                }
+
+                return base64VersBlob(photo.data, photo.type);
+            })
+        );
+
+        return {
+            ...enregistrement,
+            photos: photos
+        };
+    }));
+}
+
+function telechargerSauvegardeSecurite() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const achats = await lireMagasinPourSauvegarde("achats");
+            const ventes = await lireMagasinPourSauvegarde("ventes");
+
+            const sauvegarde = {
+                format: "vinted-suivi-backup",
+                version: 1,
+                dateCreation: new Date().toISOString(),
+                achats: await preparerDonneesSauvegarde(achats),
+                ventes: await preparerDonneesSauvegarde(ventes)
+            };
+
+            const fichier = new Blob(
+                [JSON.stringify(sauvegarde, null, 2)],
+                { type: "application/json" }
+            );
+
+            const url = URL.createObjectURL(fichier);
+            const lien = document.createElement("a");
+            const date = new Date().toISOString().slice(0, 10);
+
+            lien.href = url;
+            lien.download = "Securite_Vinted_" + date + ".json";
+
+            document.body.appendChild(lien);
+            lien.click();
+            document.body.removeChild(lien);
+
+            setTimeout(function() {
+                URL.revokeObjectURL(url);
+            }, 2000);
+
+            resolve();
+
+        } catch (erreur) {
+            reject(erreur);
+        }
+    });
+}
+
+async function restaurerSauvegarde(fichier) {
+
+    try {
+        if (!db) {
+            throw new Error("La base de données n'est pas disponible.");
+        }
+
+        const texte = await fichier.text();
+        const sauvegarde = JSON.parse(texte);
+
+        if (
+            sauvegarde.format !== "vinted-suivi-backup" ||
+            sauvegarde.version !== 1 ||
+            !Array.isArray(sauvegarde.achats) ||
+            !Array.isArray(sauvegarde.ventes)
+        ) {
+            throw new Error("Ce fichier n'est pas une sauvegarde Vinted valide.");
+        }
+
+        const achats = await convertirDonneesRestauration(sauvegarde.achats);
+        const ventes = await convertirDonneesRestauration(sauvegarde.ventes);
+
+        if (!confirm(
+            "Une sauvegarde de sécurité va être téléchargée avant le remplacement. Continuer ?"
+        )) {
+            return;
+        }
+
+        await telechargerSauvegardeSecurite();
+
+        if (!confirm(
+            "Vérifie que le fichier Securite_Vinted est bien enregistré dans Téléchargements. Les données actuelles seront ensuite remplacées. Continuer ?"
+        )) {
+            alert("Restauration annulée. Tes données actuelles sont conservées.");
+            return;
+        }
+
+        await new Promise((resolve, reject) => {
+
+            const transaction = db.transaction(
+                ["achats", "ventes"],
+                "readwrite"
+            );
+
+            const magasinAchats = transaction.objectStore("achats");
+            const magasinVentes = transaction.objectStore("ventes");
+
+            magasinAchats.clear();
+            magasinVentes.clear();
+
+            achats.forEach(function(achat) {
+                magasinAchats.put(achat);
+            });
+
+            ventes.forEach(function(vente) {
+                magasinVentes.put(vente);
+            });
+
+            transaction.oncomplete = resolve;
+
+            transaction.onerror = function() {
+                reject(transaction.error);
+            };
+
+            transaction.onabort = function() {
+                reject(transaction.error || new Error("Restauration annulée."));
+            };
+        });
+
+        alert("Restauration terminée avec succès !");
+
+        location.reload();
+
+    } catch (erreur) {
+        console.error("Erreur de restauration :", erreur);
+        alert("La restauration a échoué : " + erreur.message);
+    }
+}
+
+document.getElementById("restaurer-sauvegarde")
+    .addEventListener("click", function() {
+        document.getElementById("fichier-sauvegarde").click();
+    });
+
+document.getElementById("fichier-sauvegarde")
+    .addEventListener("change", function(event) {
+
+        const fichier = event.target.files[0];
+
+        if (fichier) {
+            restaurerSauvegarde(fichier);
+        }
+
+        event.target.value = "";
+    });
