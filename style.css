@@ -506,3 +506,28 @@ main h2 {
     cursor: pointer;
     font-family: Arial, sans-serif;
 }
+
+
+/* Harmonisation des boutons de sauvegarde */
+
+#retour-sauvegarde,
+#creer-sauvegarde,
+#restaurer-sauvegarde {
+    padding: 18px 28px;
+    min-height: 72px;
+    border: none;
+    border-radius: 16px;
+    background-color: #e8eeee;
+    color: #263238;
+    font-family: Arial, sans-serif;
+    font-size: 26px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+#retour-sauvegarde:hover,
+#creer-sauvegarde:hover,
+#restaurer-sauvegarde:hover {
+    background-color: #dce5e5;
+}
+
